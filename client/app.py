@@ -1,8 +1,10 @@
+"""client code"""
+
+
 import sys
-import requests, json 
+import requests, json
 from PyQt5 import QtGui, QtQml, QtCore, QtWidgets
 from PyQt5.QtCore import QAbstractListModel, QModelIndex, QStringListModel, QVariant, pyqtSlot, QObject
-
 
 
 class TodoModel(QtCore.QAbstractListModel):
@@ -15,11 +17,11 @@ class TodoModel(QtCore.QAbstractListModel):
 
 #-----------------------------------------------------
 
-	def rowCount(self,parent=QModelIndex()):
+	def rowCount(self, parent=QModelIndex()):
 		return len(self.notes)
 #-----------------------------------------------------
 
-	def data(self, index,role):
+	def data(self, index, role):
 		if not index.isValid():
 			return QVariant()
 
@@ -35,22 +37,23 @@ class TodoModel(QtCore.QAbstractListModel):
 		return QVariant()
 #-----------------------------------------------------
 
-	@pyqtSlot(int,result=QVariant)
+	@pyqtSlot(int, result=QVariant)
 	def get(self, index):
 		if index < len(self.notes) and index >= 0:
 			return self.notes[index]
 		return None
 #-----------------------------------------------------
 
-	@pyqtSlot(int,str,QVariant)
+	@pyqtSlot(int, str, QVariant)
 	def set(self, index, key, value):
 		if index < len(self.notes):
 			self.notes[index][key] = value
 			if key == "checked":
 				objet_id = self.notes[index]["id"]
-				resp = requests.put(url=self.url+"/"+objet_id, json={"checked": value})
-				print(resp.json())	
-				
+				resp = requests.put(url=self.url+"/"+objet_id,
+						    json={"checked": value})
+				print(resp.json())
+
 #-----------------------------------------------------
 	@pyqtSlot()
 	def sync(self):
@@ -69,22 +72,21 @@ class TodoModel(QtCore.QAbstractListModel):
 			data = resp.json()
 		except:
 			print("error getting data")
-			return 
+			return
 
 		self.notes = data["results"]
 
 		self.endResetModel()
 
 
-
 #-----------------------------------------------------
 	@pyqtSlot(str)
 	def add(self, title):
 		try:
-			resp = requests.post(self.url, json = {"title":title})
+			resp = requests.post(self.url, json = {"title": title})
 		except Exeption as e:
-			print("erreur",e)
-			return 
+			print("erreur", e)
+			return
 
 		print(resp.json())
 
@@ -96,30 +98,27 @@ class TodoModel(QtCore.QAbstractListModel):
 		try:
 			resp = requests.delete(self.url+"/checked")
 		except Exception as e:
-			print("erreur",e)
+			print("erreur", e)
 			return
 
 		self.update()
 
 
-
 if __name__ == "__main__":
-
-
 
 	app = QtGui.QGuiApplication(sys.argv)
 	engine = QtQml.QQmlApplicationEngine()
 
-	
+
 	test = QStringListModel()
-	test.setStringList(["sacha","boby","test","allo"])
+	test.setStringList(["sacha", "boby", "test", "allo"])
 
 	model = TodoModel()
 	print(model.roleNames())
 	print(model.roleNames())
 
-	
-	engine.rootContext().setContextProperty("todoModel",model)
+
+	engine.rootContext().setContextProperty("todoModel", model)
 	engine.load(QtCore.QUrl("qml/app.qml"))
 
 	sys.exit(app.exec_())

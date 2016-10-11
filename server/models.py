@@ -1,5 +1,6 @@
 from mongoengine import * 
 
+
 class Note(Document):
 	title   = StringField(required=True, max_lengh=255)
 	checked = BooleanField(required=True, default=False)
@@ -11,7 +12,7 @@ class Note(Document):
 		"checked" : self.checked
 		}
 
-	def import_data(self,data):
+	def import_data(self, data):
 
 		self.title   = data.get("title")
-		self.checked = bool(data.get("checked",False))
+		self.checked = bool(data.get("checked", False))
