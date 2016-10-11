@@ -1,10 +1,12 @@
 import QtQuick 2.7
 
 Image{
+    id: root
     width: 32
     height: 32
     property bool checked: false
     source: checked ? "ui/checked.png" : "ui/unchecked.png"
+    signal clicked()
 
     Image {
         source: "ui/valid.png"
@@ -23,8 +25,8 @@ Image{
     MouseArea {
         id: area
         anchors.fill: parent
-        onClicked: checked = !checked
-    }
+        onClicked: { checked = !checked; root.clicked()    }
 
 
+}
 }

@@ -19,8 +19,8 @@ def notes():
 			note = Note()
 			note.import_data(request.json)
 			note.save()
-		except:
-			return jsonify({"success":False, "message":"cannot save note"})
+		except Exception as ex:
+			return jsonify({"success":False, "message":"cannot save note : " + str(ex)})
 		
 		return jsonify({"success":True, "results": str(note.id)})
 

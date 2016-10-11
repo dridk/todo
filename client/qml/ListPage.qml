@@ -32,6 +32,11 @@ Item {
             ToolButton {
                 source: "ui/remove.png"
             }
+
+            ToolButton {
+                source: "ui/update.png"
+                onClicked: todoModel.sync()
+            }
         }
 
         ToolButton {
@@ -73,52 +78,85 @@ Item {
     }
 
 
-    ListView {
+
+    Column {
+        id : view
         anchors.top:header.bottom
         width: parent.width
-        anchors.bottom: parent.bottom
-        model :myModel
-        clip: true
-        delegate : Item {
-            height:58
-            width :root.width
 
-            CheckBox{
-                id: checkBox
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: 24
-                checked: check
-            }
+        Repeater {
 
-            Text {
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: 94
-                text: title
-                font.pixelSize: 18
-                font.family: "Arial"
-                font.bold: true
-                color:"#888A85"
-                opacity: checkBox.checked ? 0.5 : 1
-            }
+            model :todoModel
+            delegate : Item {
+                height:58
+                width :root.width
+
+                CheckBox{
+                    id: checkBox
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 24
+                    checked: todoModel.get(index).checked
+                    onClicked: 
+                    {
+                        todoModel.set(index,"checked", checked)
+                    }
+                }
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 94
+                    text: todoModel.get(index).title
+                    font.pixelSize: 18
+                    font.family: "Arial"
+                    font.bold: true
+                    color:"#888A85"
+                    opacity: checkBox.checked ? 0.5 : 1
+                }
 
 
-            Image {
-                source: "ui/line.png"
-                anchors.top: parent.top
-            }
-            Image {
-                source: "ui/line.png"
-                anchors.bottom: parent.bottom
-                visible: index == myModel.count-1
+                Image {
+                    source: "ui/line.png"
+                    anchors.top: parent.top
+                }
+                Image {
+                    source: "ui/line.png"
+                    anchors.bottom: parent.bottom
+                    visible: index == myModel.count-1
+                }
+
             }
 
         }
-
-
     }
 
+
+    Item {
+        id: footer
+        height: 100
+        anchors.bottom: root.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: 83
+        anchors.right: parent.right
+
+        Row {
+            anchors.centerIn: parent
+            spacing: 130
+
+            Button {
+                text: "Back"
+
+            }
+
+            Button
+            {
+                text: "r"
+
+            }
+        }
+
+    }
 
 
 
