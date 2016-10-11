@@ -37,7 +37,7 @@ class TodoModel(QtCore.QAbstractListModel):
 
 	@pyqtSlot(int,result=QVariant)
 	def get(self, index):
-		if index < len(self.notes):
+		if index < len(self.notes) and index >= 0:
 			return self.notes[index]
 		return None
 #-----------------------------------------------------
@@ -45,10 +45,12 @@ class TodoModel(QtCore.QAbstractListModel):
 	@pyqtSlot(int,str,QVariant)
 	def set(self, index, key, value):
 		if index < len(self.notes):
-			print("change ", key, value)
 			self.notes[index][key] = value
-			
-		
+			if key == "checked":
+				objet_id = self.notes[index]["id"]
+				resp = requests.put(url=self.url+"/"+objet_id, json={"checked": value})
+				print(resp.json())	
+				
 #-----------------------------------------------------
 	@pyqtSlot()
 	def sync(self):
@@ -76,20 +78,28 @@ class TodoModel(QtCore.QAbstractListModel):
 
 
 #-----------------------------------------------------
-	@pyqtSlot()
+	@pyqtSlot(str)
 	def add(self, title):
 		try:
-			resp = requests.post(self.url, data={"title":title})
+			resp = requests.post(self.url, json = {"title":title})
 		except Exeption as e:
-			print(e)
+			print("erreur",e)
 			return 
 
-		if resp.json().get("success") == True:
-			self.beginResetModel()
-			self.notes.append({"title":title, "checked": False})
-			self.endResetModel()
-	
+		print(resp.json())
 
+		if resp.json().get("success") == True:
+			self.update()
+#-----------------------------------------------------
+	@pyqtSlot()
+	def remove_all(self):
+		try:
+			resp = requests.delete(self.url+"/checked")
+		except Exception as e:
+			print("erreur",e)
+			return
+
+		self.update()
 
 
 

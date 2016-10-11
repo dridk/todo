@@ -14,6 +14,8 @@ def notes():
 		return jsonify({"success":True, "results": result}) 
 
 	if request.method == 'POST':
+
+		print(request.json)
 		
 		try:
 			note = Note()
@@ -23,6 +25,27 @@ def notes():
 			return jsonify({"success":False, "message":"cannot save note : " + str(ex)})
 		
 		return jsonify({"success":True, "results": str(note.id)})
+
+@app.route("/todo/<object_id>", methods=["PUT"])
+def set_checked(object_id):
+	try : 
+		note = Note.objects.get(pk = object_id)
+	except Exception as e : 
+		return jsonify({"success":False, "message":str(e)})
+
+	# Stupid hack... for testing 
+
+	note.checked = request.json["checked"]
+
+	
+	try:
+		note.save()
+	except Exception as e: 
+		return jsonify({"success":False, "message": str(e)})
+
+
+	return jsonify({"success":True, "results": {}})
+
 
 
 @app.route("/todo/<object_id>")
@@ -44,6 +67,15 @@ def delete_note(object_id):
 	note.delete()
 	return jsonify({"success":"true"})
 
+
+@app.route("/todo/checked", methods=["DELETE"])
+def delete_checked():
+	try:
+		Note.objects(checked=True).delete()
+	except :
+		return jsonify({"success":False, "message":"cannot delete"})
+
+	return jsonify({"success":"true"})
 
 
 

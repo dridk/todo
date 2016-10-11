@@ -1,10 +1,13 @@
 
 import QtQuick 2.7
 
-Item {
+Image {
     id: root
-    width : 500
-    height: 500
+
+    source:"ui/background.png"
+
+    signal addClicked()
+    signal settingsClicked()
 
 
     Item {
@@ -27,10 +30,12 @@ Item {
 
             ToolButton {
                 source: "ui/add.png"
+                onClicked: root.addClicked()
             }
 
             ToolButton {
                 source: "ui/remove.png"
+                onClicked: todoModel.remove_all()
             }
 
             ToolButton {
@@ -39,11 +44,23 @@ Item {
             }
         }
 
-        ToolButton {
-            source: "ui/settings.png"
+        Row {
             anchors.right: parent.right
             anchors.rightMargin: 24
             anchors.verticalCenter: parent.verticalCenter
+            spacing: 24
+
+        ToolButton {
+            source: "ui/settings.png"
+            onClicked: root.settingsClicked()
+
+        }
+
+        ToolButton {
+            source: "ui/close.png"
+            onClicked: Qt.quit()
+
+        }
 
         }
     }
@@ -79,14 +96,17 @@ Item {
 
 
 
-    Column {
-        id : view
-        anchors.top:header.bottom
-        width: parent.width
 
-        Repeater {
 
+        ListView {
+            id : view
+            anchors.top:header.bottom
+            width: parent.width
+            anchors.bottom: footer.top
+            anchors.bottomMargin: 20
+            clip: true
             model :todoModel
+            currentIndex : 0
             delegate : Item {
                 height:58
                 width :root.width
@@ -123,12 +143,12 @@ Item {
                 Image {
                     source: "ui/line.png"
                     anchors.bottom: parent.bottom
-                    visible: index == myModel.count-1
+                    visible: index == todoModel.count-1
                 }
 
             }
 
-        }
+
     }
 
 
@@ -146,12 +166,28 @@ Item {
 
             Button {
                 text: "Back"
+                onClicked: {
+
+                    if ( view.currentIndex - 4 >= 0) {
+                    view.currentIndex-=4
+                    view.positionViewAtIndex(view.currentIndex, ListView.Beginning )
+                    }
+
+                }
 
             }
 
             Button
             {
-                text: "r"
+                text: "Next"
+                onClicked: {
+
+                    if ( view.currentIndex+4 < view.count) {
+                    view.currentIndex+=4
+                    view.positionViewAtIndex(view.currentIndex, ListView.Beginning )
+                    }
+
+                }
 
             }
         }
