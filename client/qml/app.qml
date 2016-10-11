@@ -11,7 +11,7 @@ Window {
     flags: Qt.FramelessWindowHint | Qt.Window
     minimumHeight: 500
     maximumHeight:  500
-    opacity: active ? 1 : 0.2
+    opacity: active ? 1 : 0.6
     Behavior on opacity {
         NumberAnimation {
         duration : 100
