@@ -13,15 +13,17 @@ From ubuntu :
 	
 	sudo apt-get install mongodb 
 
-Then install flask like this : 
+Then install dependencies and run: 
 
 	pip3 install -r server/requirements.txt
+	python3 server/app.py
 
 ## Client 
 Todo Client is a pyQt5.7 client made with pure QML. Other module are note used. 
-To install dependencies : 
+To install dependencies and run : 
 
 	pip3 install -r client/requirements.txt
+	python3 client/app.py
 
 
 
